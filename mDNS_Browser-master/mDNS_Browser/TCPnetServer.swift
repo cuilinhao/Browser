@@ -17,12 +17,31 @@ class TCPnetServer: NSObject, ObservableObject {
     
     private var listener: NWListener?
     
-    //NWListener.Service(name: "server", type: "_superapp._tcp")
     func bonjourTCPListener(called: String, serviceTCPName: String, serviceDomain: String) {
         print("Bonjour TCP Listener: The Bonjour TCP function - \(called)")
         do {
+            //编码后的数据 可能
+            let record = NWTXTRecord()
+            let random = Int8.random(in: 0...Int8.max)
             self.listener = try NWListener(using: .tcp)
-            self.listener?.service = NWListener.Service(name:called, type: serviceTCPName, domain: serviceDomain, txtRecord: nil)
+            
+            let txtDict = ["test": "_localNode.peerID",
+                           "userid": random.description]
+            //record.setEntry(NWTXTRecord.Entry.string(random.description), for: "userid")
+            
+            //var service = NWListener.Service(name:called, type: serviceTCPName, domain: serviceDomain, txtRecord: record)
+            
+            //这个不行因为data不对，data要特定的格式
+            //let dd = "_localNode.peerID".data(using: String.Encoding.utf8)
+            //var service1 = NWListener.Service(name:called, type: serviceTCPName, domain: serviceDomain, txtRecord: dd)
+            
+            let service2 = NWListener.Service(name:called, type: serviceTCPName, domain: serviceDomain, txtRecord: record)
+            
+            let service3 = NWListener.Service(name: called, type: serviceTCPName, domain: serviceDomain, txtRecord: NWTXTRecord.init(txtDict))
+            
+            //self.listener?.service = NWListener.Service(name:called, type: serviceTCPName, domain: serviceDomain, txtRecord: nil)
+            self.listener?.service = service3
+            
             self.listener?.serviceRegistrationUpdateHandler = { (serviceChange) in
                 switch(serviceChange) {
                 case .add(let endpoint):

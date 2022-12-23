@@ -13,11 +13,12 @@ import Network
  * 可以是client 也可以是server 查看状态
  */
 class mCastBrowser: NSObject, ObservableObject, Identifiable {
-    
+    //model 数据
     struct objectOf:Hashable {
         var id:UUID? = UUID()
         var device:String = ""
         var IsIndexed:Int = 0
+        var userId: String = ""
     }
     
     @Published var devices: [objectOf] = [] {
@@ -28,18 +29,23 @@ class mCastBrowser: NSObject, ObservableObject, Identifiable {
     
     var browser: NWBrowser!
     
+    /*
+     
+     1、他们有 http server
+     
+     2. 我拿他们相册数据，展示到app
+     
+     3.
+     
+     */
     //扫描所有设备
     func scan(typeOf: String, domain: String) {
-        let bonjourTCP = NWBrowser.Descriptor.bonjour(type: typeOf , domain: domain)
+        //let bonjourTCP = NWBrowser.Descriptor.bonjour(type: typeOf , domain: domain)
+        let bonjourTCP = NWBrowser.Descriptor.bonjourWithTXTRecord(type: typeOf, domain: domain)
         let bonjourParms = NWParameters.init()
         bonjourParms.allowLocalEndpointReuse = true
         bonjourParms.acceptLocalOnly = true
         bonjourParms.allowFastOpen = true
-        
-        //class func quic(alpn: [String]) -> NWParameters
-        //Returns a set of default parameters for connections and listeners that use QUIC, with a set of supported Application-Layer Protocol Negotiation values.
-        //class func quicDatagram(alpn: [String]) -> NWParameters
-        //Returns a set of default parameters for connections and listeners that use QUIC datagrams, with a set of supported Application-Layer Protocol Negotiation values.
         
         browser = NWBrowser(for: bonjourTCP, using: bonjourParms)
         browser.stateUpdateHandler = {newState in
@@ -55,25 +61,33 @@ class mCastBrowser: NSObject, ObservableObject, Identifiable {
                 break
             }
         }
+        //搜索结果
         browser.browseResultsChangedHandler = { ( results, changes ) in
             print("NW Browser: Scan results found:")
             for result in results {
+//                var userId  = ""
+//                if case let .bonjour(record) = result.metadata {
+//                    userId = record["userid"]!
+//                    print("__rrrr_>>>_\(record["userid"])")
+//                }
                 print(result.endpoint.debugDescription)
             }
             for change in changes {
+                
                 if case .added(let added) = change {
-                    print("NW Browser: Added")
-                    // case service(name: String, type: String, domain: String, interface: NWInterface?)
-                    ///         This is the interesting part - the service has 4 parts - almost matching endpoint
-                    ///         because the endpoint has name Type, Domain, but then also metadata, and the last match with the service; interface
-                    //          if case .service(let name, let type, let domain, let interface) = added.endpoint {
-                    ///         The real question should be, why not just create an array of endpoints, and keep that as reference?
-                    ///         But that  we can do when connecting with endpoint name, because then it is best to refresh
                     //endpoint 主机端口端点表示由主机和端口定义的端点。
+                    //case service(name: String, type: String, domain: String, interface: NWInterface?)
+                    //NWBrowser.Result
+                    //if case .hostPort(host: qq, port: ee) = added.endpoint {
+                    //}
                     if case .service(let name, _, _, _) = added.endpoint {
-                        //let device = objectOf(device: service.name, IsIndexed: self.devices.count)
-                        let device = objectOf(device: name, IsIndexed: self.devices.count)
-                        //self.devices.removeAll()
+                        var userId  = ""
+                        if case let .bonjour(record) = added.metadata {
+                            userId = record["userid"]!
+                            print("__rrrr_>>>_\(record["userid"])____\(record["test"])")
+                        }
+                        let device = objectOf(device: name, IsIndexed: self.devices.count, userId: userId)
+                        //let device = objectOf(device: name, IsIndexed: self.devices.count)
                         self.devices.append(device)
                     }
                     

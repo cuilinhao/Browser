@@ -63,7 +63,9 @@ struct ContentView: View {
                 
                 List {
                     ForEach(bonBrowser.devices, id: \.self) { each in
-                        Text(each.device)
+                        let dev = each.device + " 「userId:" + each.userId
+                        //Text(each.device)
+                        Text(dev)
                             .onTapGesture {
                                 self.deviceName = each.device
                                 self.isSelected.toggle()
@@ -123,7 +125,7 @@ struct ContentView: View {
                     .multilineTextAlignment(.center)
                 
                 Button(action: {
-                    //                  self.bonBrowser.scan(typeOf: serviceType, domain: netDomain)
+                    //self.bonBrowser.scan(typeOf: serviceType, domain: netDomain)
                     self.tcpNetServer.bonjourTCPListener(called: UIDevice.current.name, serviceTCPName: serviceType, serviceDomain: netDomain)
                 }, label: {
                     Text("Start server")

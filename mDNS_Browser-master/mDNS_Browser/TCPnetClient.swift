@@ -34,7 +34,15 @@ class TCPnetClient: NSObject, ObservableObject {
                 break
             }
         }
+        
         self.netConnect?.start(queue: .main)
+        /*
+         收消息 和发消息
+         */
+        //self.netConnect?.send(content: Data?, contentContext: <#T##NWConnection.ContentContext#>, isComplete: <#T##Bool#>, completion: <#T##NWConnection.SendCompletion#>)
+//        self.netConnect?.receive(minimumIncompleteLength: <#T##Int#>, maximumLength: <#T##Int#>, completion: { content, contentContext, isComplete, error in
+//            <#code#>
+//        })
     }
     
 }
