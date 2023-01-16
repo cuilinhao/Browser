@@ -20,7 +20,10 @@ struct ContentView: View {
     
     //@State private var serviceType   = "_mytype._tcp"
     //_rxdnssd
-    @State private var serviceType   = "_rxdnssd._tcp"
+    //@State private var serviceType   = "_rxdnssd._tcp"
+    
+    @State private var serviceType   = "_nsdalbum._tcp"
+    
     @State private var netDomain = "local."
     @State private var isSelected = false
     @State private var deviceName: String = ""
@@ -33,8 +36,6 @@ struct ContentView: View {
     @State var searchSvr = false
     @State var connectSvr = false
     
-    
-    
     var body: some View {
         VStack {
             
@@ -46,7 +47,6 @@ struct ContentView: View {
                 Text("Scan the local network, and list all devices of given type")
                     .font(.caption)
                     .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
-                
                 
                 Button(action: {
                     //如果只是搜索单独的手机
@@ -87,6 +87,26 @@ struct ContentView: View {
                 
                 Text(tcpNetClient.connectState)
                     .padding(.bottom)
+                
+                
+                if #available(iOS 15.0, *) {
+                    
+                    Image(uiImage: (UIImage(data: self.tcpNetClient.imgData) ?? UIImage(named: "aaa"))!)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 80, height: 80)
+                        .clipShape(Capsule())
+                        .overlay {
+                            Capsule()
+                                .stroke(Color.primary, lineWidth: 1.0)
+                        }
+                        
+                        
+                    
+                } else {
+                    // Fallback on earlier versions
+                }
+                
                 
             }
             .padding(.horizontal)
