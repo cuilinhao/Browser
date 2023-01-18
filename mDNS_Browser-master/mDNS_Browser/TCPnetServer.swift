@@ -48,6 +48,7 @@ class TCPnetServer: NSObject, ObservableObject {
                     switch endpoint {
                         //case service(name: String, type: String, domain: String, interface: NWInterface?)
                     case let .service(name, type, domain, interface):
+                        //Service Name iPhone of type _nsdalbum._tcp having domain: local. and interface: nil
                         print("Service Name \(name) of type \(type) having domain: \(domain) and interface: \(String(describing: interface?.debugDescription))")
                     default:
                         break
@@ -65,13 +66,27 @@ class TCPnetServer: NSObject, ObservableObject {
                     break
                 }
             }
+            ///该方法没有调用
             self.listener?.newConnectionHandler = {(newConnection) in
                 newConnection.stateUpdateHandler = {newState in
                     switch newState {
                     case .ready:
                         print("Bonjour TCP Listener: new  connection state - ready")
+                        print("___>>>_\(newConnection.endpoint)")
+                        
+                        switch newConnection.endpoint {
+                        case let .hostPort(host: host, port: port):
+                            print("___>>>_\(host)_____\(port)")
+                        case let .service(name: name, type: type, domain: domain, interface: nil):
+                            print("___>>>_\(name)___\(type)__\(domain)")
+                        default:
+                            break
+                        }
+                        
+                        
                         self.receive(on: newConnection, recursive: true)
                         //self.receive(recursive: true)
+                        
                     default:
                         break
                     }

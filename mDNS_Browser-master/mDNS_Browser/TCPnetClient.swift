@@ -57,9 +57,16 @@ class TCPnetClient: NSObject, ObservableObject {
          收消息 和发消息
          */
         //self.netConnect?.send(content: Data?, contentContext: <#T##NWConnection.ContentContext#>, isComplete: <#T##Bool#>, completion: <#T##NWConnection.SendCompletion#>)
-//        self.netConnect?.receive(minimumIncompleteLength: <#T##Int#>, maximumLength: <#T##Int#>, completion: { content, contentContext, isComplete, error in
-//            <#code#>
-//        })
+        
+        ///发送数据
+        self.netConnect?.send(content: "abc".data(using: .utf8), completion: NWConnection.SendCompletion.contentProcessed({ error in
+            print("___>>>_\(error)")
+        }))
+        
+        ///接收数据
+        self.netConnect?.receive(minimumIncompleteLength: <#T##Int#>, maximumLength: <#T##Int#>, completion: { content, contentContext, isComplete, error in
+            // 接收到的data
+        })
     }
     
      func requestData() {
