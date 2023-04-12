@@ -64,41 +64,18 @@ class TCPnetClient: NSObject, ObservableObject {
         }))
         
         ///接收数据
-        self.netConnect?.receive(minimumIncompleteLength: <#T##Int#>, maximumLength: <#T##Int#>, completion: { content, contentContext, isComplete, error in
+        self.netConnect?.receive(minimumIncompleteLength: 8, maximumLength: 8, completion: { content, contentContext, isComplete, error in
             // 接收到的data
+            print("_接收数据__>>>_\(content)__\(contentContext)___\(isComplete)___\(error)")
         })
-    }
-    
-     func requestData() {
-        let session = URLSession(configuration: .default)
-        //let url = URL(string: "http://127.0.0.1:8080/api/test")!
-         
-        let str = "http://172.20.10.3:8080/.photoShare/thumb/lcd/default-album-1/00e6fba788569c0d339837669eb8535c18cbb7825c61b60bfd5ccda42d36e463.jpg"
-        let localStr = "http://127.20.10.3:8080"
-        let url = URL(string: str)!
-        var urlRequest = URLRequest(url: url)
-        //urlRequest.method = .post
-        urlRequest.httpMethod = "GET"
-        print("___>>>_qqqqq")
-        let task = session.dataTask(with: urlRequest) { (data, response, error) in
-            print("___>>>_\(data)")
-            do {
-                self.imgData = data!// ?? UIImage(named: "aaa")?.pngData()!
-                let jsonData = try? JSONSerialization.jsonObject(with: data!, options: .mutableContainers)
-                if let dic = jsonData as? [String : Any] {
-                    print("___>>>_\(dic)")
-                }
-            } catch  {
-                //如果链接失败´
-                print("___>>>_链接失败__error:\(error)")
-            }
-        }
-        task.resume()
     }
     
     private func testPublisher() {
         let session = URLSession(configuration: .default)
-        let str = "http://172.20.10.3:8080/.photoShare/thumb/lcd/default-album-1/00e6fba788569c0d339837669eb8535c18cbb7825c61b60bfd5ccda42d36e463.jpg"
+        let str = "http://172.20.10.2:8080/.photoShare/thumb/lcd/default-album-1/00e6fba788569c0d339837669eb8535c18cbb7825c61b60bfd5ccda42d36e463.jpg"
+        
+//        let str = "http://172.20.10.3:8080/.photoShare/thumb/lcd/default-album-1/00e6fba788569c0d339837669eb8535c18cbb7825c61b60bfd5ccda42d36e463.jpg"
+        
         let localStr = "http://127.20.10.3:8080"
         let url = URL(string: str)!
         var urlRequest = URLRequest(url: url)
@@ -113,22 +90,52 @@ class TCPnetClient: NSObject, ObservableObject {
         }
     }
     
-    private func requestData22() {
-        let session = URLSession(configuration: .default)
-        let url = "http://172.20.10.4:8080"
-        let urlRequest = URLRequest(url: URL(string: url)!)
-        let task = session.dataTask(with: urlRequest) { (data, response, error) in
-            do {
-                //返回
-                let r =  try JSONSerialization.jsonObject(with: data!, options: [])
-                print("___>>>_\(r)")
-            } catch {
-                //如果链接失败
-                print("___>>>_链接服务器失败")
-            }
-        }
-        task.resume()
-    }
+//
+//     func requestData() {
+//        let session = URLSession(configuration: .default)
+//        //let url = URL(string: "http://127.0.0.1:8080/api/test")!
+//
+//        let str = "http://172.20.10.3:8080/.photoShare/thumb/lcd/default-album-1/00e6fba788569c0d339837669eb8535c18cbb7825c61b60bfd5ccda42d36e463.jpg"
+//        let localStr = "http://127.20.10.3:8080"
+//        let url = URL(string: str)!
+//        var urlRequest = URLRequest(url: url)
+//        //urlRequest.method = .post
+//        urlRequest.httpMethod = "GET"
+//        print("___>>>_qqqqq")
+//        let task = session.dataTask(with: urlRequest) { (data, response, error) in
+//            print("___>>>_\(data)")
+//            do {
+//                self.imgData = data!// ?? UIImage(named: "aaa")?.pngData()!
+//                let jsonData = try? JSONSerialization.jsonObject(with: data!, options: .mutableContainers)
+//                if let dic = jsonData as? [String : Any] {
+//                    print("___>>>_\(dic)")
+//                }
+//            } catch  {
+//                //如果链接失败´
+//                print("___>>>_链接失败__error:\(error)")
+//            }
+//        }
+//        task.resume()
+//    }
+//
+//
+//
+//    private func requestData22() {
+//        let session = URLSession(configuration: .default)
+//        let url = "http://172.20.10.4:8080"
+//        let urlRequest = URLRequest(url: URL(string: url)!)
+//        let task = session.dataTask(with: urlRequest) { (data, response, error) in
+//            do {
+//                //返回
+//                let r =  try JSONSerialization.jsonObject(with: data!, options: [])
+//                print("___>>>_\(r)")
+//            } catch {
+//                //如果链接失败
+//                print("___>>>_链接服务器失败")
+//            }
+//        }
+//        task.resume()
+//    }
     
 }
 

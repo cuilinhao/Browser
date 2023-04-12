@@ -70,16 +70,32 @@ class mCastBrowser: NSObject, ObservableObject, Identifiable {
 //                    userId = record["userid"]!
 //                    print("__rrrr_>>>_\(record["userid"])")
 //                }
-                print(result.endpoint.debugDescription)
+            //case .add(let endpoint)://case add(NWEndpoint)
+                switch result.endpoint {
+                    //case service(name: String, type: String, domain: String, interface: NWInterface?)
+//                case let .service(name, type, domain, interface):
+//                    //Service Name iPhone of type _nsdalbum._tcp having domain: local. and interface: nil
+//                    print("_____>>>>>__result_Service Name \(name) of type \(type) having domain: \(domain) and interface: \(String(describing: interface?.debugDescription))")
+                case let .hostPort(host: host, port: port):
+                    print("___>>>_result__host&port__\(host)_____\(port)")
+                    
+                default:
+                    break
+                }
+                
+                
+                print("____>>>>_result_debug_\(result.endpoint.debugDescription)")
             }
             for change in changes {
                 
                 if case .added(let added) = change {
+                    
                     //endpoint 主机端口端点表示由主机和端口定义的端点。
                     //case service(name: String, type: String, domain: String, interface: NWInterface?)
                     //NWBrowser.Result
-                    //if case .hostPort(host: qq, port: ee) = added.endpoint {
-                    //}
+                    if case .hostPort(let is_host, let is_port) = added.endpoint {
+                        print("__changes_>>>_\(is_host)____\(is_port)")
+                    }
                     if case .service(let name, _, _, _) = added.endpoint {
                         var userId  = ""
                         if case let .bonjour(record) = added.metadata {
