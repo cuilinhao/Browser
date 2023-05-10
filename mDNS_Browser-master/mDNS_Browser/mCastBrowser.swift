@@ -20,15 +20,12 @@ class mCastBrowser: NSObject, ObservableObject, Identifiable {
         var IsIndexed:Int = 0
         var userId: String = ""
     }
-    
     @Published var devices: [objectOf] = [] {
         willSet {
             objectWillChange.send()
         }
     }
-    
     var browser: NWBrowser!
-    
     /*
      
      1、他们有 http server
@@ -114,6 +111,8 @@ class mCastBrowser: NSObject, ObservableObject, Identifiable {
                             self.devices.remove(at: index!)
                         }
                     }
+                    
+                    
                 }
             }
         }
