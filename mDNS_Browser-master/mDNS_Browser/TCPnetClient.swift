@@ -48,6 +48,11 @@ class TCPnetClient: NSObject, ObservableObject {
                 print("____>>>>__bonjourToTCP: new TCP connection ready ")
                 //self.requestData()
                 //self.testPublisher()
+                if let innerEndpoint = self.netConnect?.currentPath?.remoteEndpoint,
+                   case let .hostPort(host, port) = innerEndpoint {
+                    print(host, port)
+                }
+                
             default:
                 break
             }
