@@ -14,8 +14,8 @@
             filePath = "mDNS_Browser/TCPnetClient.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "68"
-            endingLineNumber = "68"
+            startingLineNumber = "69"
+            endingLineNumber = "69"
             landmarkName = "bonjourToTCP(called:serviceTCPName:serviceDomain:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -94,10 +94,8 @@
             filePath = "mDNS_Browser/mCastBrowser.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
-            landmarkName = "scan(typeOf:domain:)"
-            landmarkType = "7">
+            startingLineNumber = "146"
+            endingLineNumber = "146">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

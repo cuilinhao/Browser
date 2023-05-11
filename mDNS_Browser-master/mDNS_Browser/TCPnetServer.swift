@@ -17,7 +17,7 @@ class TCPnetServer: NSObject, ObservableObject {
     @Published var listenerState: String = ""
     
     private var listener: NWListener?
-    
+    ///只是监听网络状态的
     let monitor = NWPathMonitor()
     
     
