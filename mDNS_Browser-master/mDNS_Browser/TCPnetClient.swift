@@ -24,6 +24,8 @@ class TCPnetClient: NSObject, ObservableObject {
     private var cancellables: AnyCancellable?
     
     private var netConnect: NWConnection?
+    let monitor = NWPathMonitor()
+    
     
     //MARK: - This is settimng up a new connection once the service is identified/selected
     ///Now we just have to receive incoming data
@@ -45,8 +47,32 @@ class TCPnetClient: NSObject, ObservableObject {
             case .ready:
                 self.connectState = "Connection state: Ready"
                 print("____>>>>__bonjourToTCP: new TCP connection ready ")
-                //self.requestData()ddd
-                self.testPublisher()
+                //self.requestData()
+                self.getIpv4Adress { str in
+                    self.testPublisher(str)
+                }
+                //self.testPublisher(self.getIpv4Adress())
+                if let innerEndpoint = self.netConnect?.currentPath?.remoteEndpoint,
+                   case let .hostPort(host, port) = innerEndpoint {
+                    //print(host, port)
+                    print("___>>>_\(host)___\(port)")
+                }
+                
+                switch self.netConnect!.endpoint {
+                case .hostPort(host: let host, port: let port):
+                    print("___>>>_\(host)___\(port)")
+                case .service(name: let name, type: let type, domain: let domain, interface: let interface):
+                    print("___>>>_\(name)___\(type)___\(domain)__\(interface)")
+                case .unix(path: let path):
+                    break
+                case .url(let u):
+                    print("___>>>_\(u)___")
+                case .opaque(_):
+                    break
+                @unknown default:
+                    break
+                }
+                
             default:
                 break
             }
@@ -70,25 +96,54 @@ class TCPnetClient: NSObject, ObservableObject {
         })
     }
     
-    private func testPublisher() {
+    private func testPublisher(_ ipv4: String) {
         let session = URLSession(configuration: .default)
-        let str = "http://172.20.10.2:8080/.photoShare/thumb/lcd/default-album-1/00e6fba788569c0d339837669eb8535c18cbb7825c61b60bfd5ccda42d36e463.jpg"
-        
-//        let str = "http://172.20.10.3:8080/.photoShare/thumb/lcd/default-album-1/00e6fba788569c0d339837669eb8535c18cbb7825c61b60bfd5ccda42d36e463.jpg"
-        
-        let localStr = "http://127.20.10.3:8080"
+        //http://172.20.10.3:8080/Pictures/NIO/IMG_20230327_152316.jpg
+        let str = "http://" + ipv4 + ":8080/Pictures/NIO/IMG_20230327_152316.jpg"
         let url = URL(string: str)!
         var urlRequest = URLRequest(url: url)
         //urlRequest.method = .post
         urlRequest.httpMethod = "GET"
-        print("___>>>_qqqqq")
-        
         cancellables = session.dataTaskPublisher(for: urlRequest).receive(on: DispatchQueue.main).sink { error in
             print("___>>>_\(error)")
         } receiveValue: { data in
             self.imgData = data.data
         }
     }
+    
+    private func getIpv4Adress(_ completion: ((String) -> Void)?) {
+        var ipv4 = ""
+        monitor.pathUpdateHandler = { path in
+           _ =  path.gateways.map { endpoint in
+                print("___>>>__test__0_\(endpoint)")
+                switch endpoint {
+                case let .hostPort(host: host, port: port):
+                    print("___>>>_test_1_\(host)___\(port)")
+                    switch host {
+                    case let .ipv4(ip4):
+                        print("___>>>_test_2_\(ip4)")
+                        ipv4 =  ip4.debugDescription
+                        completion?(ipv4)
+                    case let .ipv6(ip6):
+                        print("___>>>_test_3_\(ip6)")
+                    default:
+                        break
+                    }
+                default:
+                    break
+                }
+            }
+            
+           if path.status == .satisfied {
+               //连接
+              print("__>>>__test__connected")
+           } else {
+              print("__>>>__test__no connection")
+           }
+        }
+        monitor.start(queue: DispatchQueue.global())
+    }
+    
     
 //
 //     func requestData() {

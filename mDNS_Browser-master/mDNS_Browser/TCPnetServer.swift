@@ -167,11 +167,6 @@ class TCPnetServer: NSObject, ObservableObject {
 
 class viewcontroller: UIViewController {
     let monitor = NWPathMonitor()
-
-//    var pathUpdateHandler: ((NWPath) -> Void)? { get set }
-
-
-    
     override func viewDidLoad() {
        super.viewDidLoad()
        monitor.pathUpdateHandler = { path in
