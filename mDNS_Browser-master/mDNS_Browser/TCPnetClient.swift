@@ -45,7 +45,7 @@ class TCPnetClient: NSObject, ObservableObject {
             case .ready:
                 self.connectState = "Connection state: Ready"
                 print("____>>>>__bonjourToTCP: new TCP connection ready ")
-                //self.requestData()
+                //self.requestData()ddd
                 self.testPublisher()
             default:
                 break
