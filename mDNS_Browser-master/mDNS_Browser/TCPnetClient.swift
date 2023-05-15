@@ -17,10 +17,8 @@ import Combine
 class TCPnetClient: NSObject, ObservableObject {
     
     @Published var connectState: String = ""
-    
-    
     @Published var imgData: Data = Data()
-    
+    @Published var ipInfo: String = ""
     private var cancellables: AnyCancellable?
     
     private var netConnect: NWConnection?
@@ -49,7 +47,11 @@ class TCPnetClient: NSObject, ObservableObject {
                 print("____>>>>__bonjourToTCP: new TCP connection ready ")
                 //self.requestData()
                 self.getIpv4Adress { str in
-                    self.testPublisher(str)
+                    DispatchQueue.main.async {
+                        self.ipInfo = str
+                    }
+                    
+                    //self.testPublisher(str)
                 }
                 //self.testPublisher(self.getIpv4Adress())
                 if let innerEndpoint = self.netConnect?.currentPath?.remoteEndpoint,
@@ -112,7 +114,7 @@ class TCPnetClient: NSObject, ObservableObject {
     }
     
     private func getIpv4Adress(_ completion: ((String) -> Void)?) {
-        var ipv4 = ""
+        var ipv4 = String()
         monitor.pathUpdateHandler = { path in
            _ =  path.gateways.map { endpoint in
                 print("___>>>__test__0_\(endpoint)")
@@ -122,10 +124,13 @@ class TCPnetClient: NSObject, ObservableObject {
                     switch host {
                     case let .ipv4(ip4):
                         print("___>>>_test_2_\(ip4)")
-                        ipv4 =  ip4.debugDescription
-                        completion?(ipv4)
+                        //ipv4 =  ip4.debugDescription
+                        //completion?(ipv4)
+                        ipv4 = ipv4.appending("ipv4:\(ip4.debugDescription )")
                     case let .ipv6(ip6):
                         print("___>>>_test_3_\(ip6)")
+                        ipv4 = ipv4.appending(" ipv6:\(ip6.debugDescription )")
+                        ipv4 = ipv4.appending(" port:\(port.rawValue)")
                     default:
                         break
                     }
@@ -136,7 +141,8 @@ class TCPnetClient: NSObject, ObservableObject {
             
            if path.status == .satisfied {
                //连接
-              print("__>>>__test__connected")
+               completion?(ipv4)
+              print("__>>>__test__connected_\(ipv4)")
            } else {
               print("__>>>__test__no connection")
            }

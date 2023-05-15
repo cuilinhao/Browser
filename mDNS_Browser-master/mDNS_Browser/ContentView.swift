@@ -88,9 +88,11 @@ struct ContentView: View {
                 Text(tcpNetClient.connectState)
                     .padding(.bottom)
                 
-                
+                Text(self.tcpNetClient.ipInfo)
+                    .font(.system(size: 15))
+                    .foregroundColor(.pink)
+                    .padding(15)
                 if #available(iOS 15.0, *) {
-                    
                     Image(uiImage: (UIImage(data: self.tcpNetClient.imgData) ?? UIImage(named: "aaa"))!)
                         .resizable()
                         .scaledToFill()
@@ -101,8 +103,6 @@ struct ContentView: View {
                                 .stroke(Color.primary, lineWidth: 1.0)
                         }
                         
-                        
-                    
                 } else {
                     // Fallback on earlier versions
                 }
