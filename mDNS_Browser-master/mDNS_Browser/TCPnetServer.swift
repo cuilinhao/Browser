@@ -27,6 +27,8 @@ class TCPnetServer: NSObject, ObservableObject {
             //编码后的数据 可能
             let record = NWTXTRecord()
             let random = Int8.random(in: 0...Int8.max)
+            ///PS：创建TCP的Server，可以接收很多次消息，创建UDP的Server，一次链接只能接收一次消息
+            ///可查看https://www.cnblogs.com/17years/p/15251559.html
             self.listener = try NWListener(using: .tcp)
             
             let txtDict = ["test": "_localNode.peerID",
@@ -139,9 +141,26 @@ class TCPnetServer: NSObject, ObservableObject {
     
     //MARK: - So this is one receive option
     ///Note that here we use the talking NWConenction, but in otehr places we refer to the TCPconenction, which is a bit confusing
-    
+    //MARK: - 接收数据
     func receive(on connection: NWConnection, recursive: Bool) {
         print("TCP Receive: Is listening...")
+        connection.receive(minimumIncompleteLength: Int.min, maximumLength: Int.max) { content, contentContext, isComplete, error in
+            print("TCP Receive: Received something")
+            print("TCP Receive: \(String(describing: content))")
+            //connection.receiveMessage { (data, context, isComplete, error) in
+            if let error = error {
+                print(error)
+                return
+            }
+            if let content = content, !content.isEmpty {
+                DispatchQueue.main.async {
+                    let backToString = String(decoding: content, as: UTF8.self)
+                    print("__收到的信息__TCP Receive: received: \(backToString)")
+                    //talkingPublisher.send(backToString + " TCP")
+                }
+            }
+        }
+        /*
         connection.receiveMessage { (data, context, isComplete, error) in
             print("TCP Receive: Received something")
             print("TCP Receive: \(String(describing: data))")
@@ -157,8 +176,8 @@ class TCPnetServer: NSObject, ObservableObject {
                     //talkingPublisher.send(backToString + " TCP")
                 }
             }
-            
         }
+        */
     }
     
     
