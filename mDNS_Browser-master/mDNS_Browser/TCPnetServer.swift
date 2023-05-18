@@ -15,6 +15,7 @@ import UIKit
 class TCPnetServer: NSObject, ObservableObject {
     
     @Published var listenerState: String = ""
+    @Published var receiveData: String = ""
     
     private var listener: NWListener?
     
@@ -157,6 +158,9 @@ class TCPnetServer: NSObject, ObservableObject {
                     let backToString = String(decoding: content, as: UTF8.self)
                     print("__收到的信息__TCP Receive: received: \(backToString)")
                     //talkingPublisher.send(backToString + " TCP")
+                    if backToString.contains("Hello") {
+                        self.receiveData = self.receiveData.appending(backToString)
+                    }
                 }
             }
         }

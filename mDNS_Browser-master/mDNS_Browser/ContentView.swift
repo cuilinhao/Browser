@@ -88,8 +88,10 @@ struct ContentView: View {
                 Text(tcpNetClient.connectState)
                     .padding(.bottom)
                 
-                Text(self.tcpNetClient.ipInfo)
-                    .font(.system(size: 15))
+                //Text(self.tcpNetClient.ipInfo)
+                Text(self.tcpNetServer.receiveData)
+                    .lineLimit(5)
+                    .font(.system(size: 8))
                     .foregroundColor(.pink)
                     .padding(15)
                 if #available(iOS 15.0, *) {
