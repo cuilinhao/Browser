@@ -76,7 +76,8 @@ struct ContentView: View {
                 
                 Button(action: {
                     self.connectSvr = true
-                    self.tcpNetClient.bonjourToTCP(called: self.deviceName, serviceTCPName: serviceType, serviceDomain: netDomain)
+                    ///创建客户端监听
+                    self.tcpNetClient.bonjourToTCP(called: self.deviceName, serviceTCPName: serviceType, serviceDomain: netDomain, address: self.tcpNetServer.address, port: self.bonBrowser.port)
                 }, label: {
                     Text("Connect to device")
                         .foregroundColor(.white)
@@ -88,10 +89,10 @@ struct ContentView: View {
                 Text(tcpNetClient.connectState)
                     .padding(.bottom)
                 
-                //Text(self.tcpNetClient.ipInfo)
-                Text(self.tcpNetServer.receiveData)
+                Text(self.tcpNetClient.ipInfo)
+                //Text(self.tcpNetServer.receiveData)
                     .lineLimit(5)
-                    .font(.system(size: 8))
+                    .font(.system(size: 18))
                     .foregroundColor(.pink)
                     .padding(15)
                 if #available(iOS 15.0, *) {

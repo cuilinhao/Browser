@@ -28,13 +28,11 @@ class mCastBrowser: NSObject, ObservableObject, Identifiable {
     }
     
     var browser: NWBrowser!
+    var port: String = ""
     
     /*
-     
      1、他们有 http server
-     
      2. 我拿他们相册数据，展示到app
-     
      3.
      
      */
@@ -71,6 +69,15 @@ class mCastBrowser: NSObject, ObservableObject, Identifiable {
 //                    print("__rrrr_>>>_\(record["userid"])")
 //                }
             //case .add(let endpoint)://case add(NWEndpoint)
+                //print("___>>>__metaData:__\(result.metadata.debugDescription)")
+                if case let .bonjour(record) = result.metadata {
+                    //userId = record["userid"]!
+                    let dic = record.dictionary
+                    if dic.keys.contains("tcp_server_port") {
+                        self.port = dic["tcp_server_port"] ?? ""
+                    }
+                }
+                
                 switch result.endpoint {
                     //case service(name: String, type: String, domain: String, interface: NWInterface?)
 //                case let .service(name, type, domain, interface):
@@ -78,16 +85,12 @@ class mCastBrowser: NSObject, ObservableObject, Identifiable {
 //                    print("_____>>>>>__result_Service Name \(name) of type \(type) having domain: \(domain) and interface: \(String(describing: interface?.debugDescription))")
                 case let .hostPort(host: host, port: port):
                     print("___>>>_result__host&port__\(host)_____\(port)")
-                    
                 default:
                     break
                 }
-                
-                
                 print("____>>>>_result_debug_\(result.endpoint.debugDescription)")
             }
             for change in changes {
-                
                 if case .added(let added) = change {
                     
                     //endpoint 主机端口端点表示由主机和端口定义的端点。
@@ -97,14 +100,16 @@ class mCastBrowser: NSObject, ObservableObject, Identifiable {
                         print("__changes_>>>_\(is_host)____\(is_port)")
                     }
                     if case .service(let name, _, _, _) = added.endpoint {
-                        var userId  = ""
-                        if case let .bonjour(record) = added.metadata {
-                            userId = record["userid"]!
-                            print("__rrrr_>>>_\(record["userid"])____\(record["test"])")
+                        var userId  = "0x"
+                        if case let .bonjour(_) = added.metadata {
+                            //userId = record["userid"]!
+                            //print("__rrrr_>>>_\(record["userid"])____\(record["test"])"
                         }
                         let device = objectOf(device: name, IsIndexed: self.devices.count, userId: userId)
                         //let device = objectOf(device: name, IsIndexed: self.devices.count)
-                        self.devices.append(device)
+                        if !name.contains("huichao.gu") {
+                            self.devices.append(device)
+                        }
                     }
                     
                     if case .removed(let removed) = change {

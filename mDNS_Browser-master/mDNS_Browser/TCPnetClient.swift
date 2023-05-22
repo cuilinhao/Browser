@@ -21,18 +21,33 @@ class TCPnetClient: NSObject, ObservableObject {
     @Published var ipInfo: String = ""
     private var cancellables: AnyCancellable?
     
-    private var netConnect: NWConnection?
+    private var netConnect: NWConnection? {
+        didSet {
+            print("DID SET")
+        }
+    }
     let monitor = NWPathMonitor()
     
     
     //MARK: - This is settimng up a new connection once the service is identified/selected
     ///Now we just have to receive incoming data
-    func bonjourToTCP(called: String, serviceTCPName: String, serviceDomain: String) {
+    func bonjourToTCP(called: String,
+              serviceTCPName: String,
+               serviceDomain: String,
+                      address: String,
+                      port: String) {
         guard !called.isEmpty else { return }
-        
-        self.netConnect = NWConnection(to: .service(name: called, type: serviceTCPName, domain: serviceDomain, interface: nil), using: .tcp)
+        //self.netConnect = NWConnection(to: .service(name: called, type: serviceTCPName, domain: serviceDomain, interface: nil), using: .tcp)
+        //guard let p = UInt16("8081"), let port =  NWEndpoint.Port(rawValue: p) else {
+          //  return
+        //}
+        //self.netConnect = NWConnection(host: NWEndpoint.Host("192.168.199.36"), port: port, using: .tcp)
+        guard let p = UInt16(port), let port =  NWEndpoint.Port(rawValue: p) else {
+            return
+        }
+        self.netConnect = NWConnection(host: NWEndpoint.Host(address), port: port, using: .tcp)
         self.netConnect?.stateUpdateHandler = { (newState) in
-            print("__>>>__bonjourToTCP: Connection details: \(String(describing: self.netConnect?.debugDescription))")
+            print("__>>>__bonjourToTCP: ConnecAQAAaAAAAaation details: \(String(describing: self.netConnect?.debugDescription))")
             switch (newState) {
             case .preparing:
                 print("___>>>_正在准备建立连接___")
@@ -45,10 +60,11 @@ class TCPnetClient: NSObject, ObservableObject {
             case .ready:
                 self.connectState = "Connection state: Ready"
                 print("____>>>>__bonjourToTCP: new TCP connection ready ")
+                
                 //self.requestData()
                 self.getIpv4Adress { str in
                     DispatchQueue.main.async {
-                        self.ipInfo = str
+                        //self.ipInfo = str
                     }
                     
                     //self.testPublisher(str)
@@ -75,6 +91,20 @@ class TCPnetClient: NSObject, ObservableObject {
                     break
                 }
                 
+                ///发送数据
+//                self.netConnect!.send(content: "0".data(using: .utf8), completion: NWConnection.SendCompletion.contentProcessed({ error in
+//                    print("___>>>_\(error)")
+//                }))
+                
+                ///接收数据
+                self.netConnect!.receive(minimumIncompleteLength: Int.min, maximumLength: Int.max, completion: { content, contentContext, isComplete, error in
+                    // 接收到的data
+                    let ss = String(data: content!, encoding: .utf8)!
+                    print("_接收数据__>>>_\(ss)__\(contentContext)___\(isComplete)___\(error)")
+                    self.ipInfo = ss
+                })
+                
+                
             default:
                 break
             }
@@ -87,15 +117,15 @@ class TCPnetClient: NSObject, ObservableObject {
         //self.netConnect?.send(content: Data?, contentContext: <#T##NWConnection.ContentContext#>, isComplete: <#T##Bool#>, completion: <#T##NWConnection.SendCompletion#>)
         
         ///发送数据
-        self.netConnect?.send(content: "abc".data(using: .utf8), completion: NWConnection.SendCompletion.contentProcessed({ error in
-            print("___>>>_\(error)")
-        }))
+//        self.netConnect?.send(content: "abc".data(using: .utf8), completion: NWConnection.SendCompletion.contentProcessed({ error in
+//            print("___>>>_\(error)")
+//        }))
         
         ///接收数据
-        self.netConnect?.receive(minimumIncompleteLength: 8, maximumLength: 8, completion: { content, contentContext, isComplete, error in
-            // 接收到的data
-            print("_接收数据__>>>_\(content)__\(contentContext)___\(isComplete)___\(error)")
-        })
+//        self.netConnect?.receive(minimumIncompleteLength: 8, maximumLength: 8, completion: { content, contentContext, isComplete, error in
+//            // 接收到的data
+//            print("_接收数据__>>>_\(content)__\(contentContext)___\(isComplete)___\(error)")
+//        })
     }
     
     private func testPublisher(_ ipv4: String) {

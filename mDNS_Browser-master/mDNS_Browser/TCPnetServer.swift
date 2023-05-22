@@ -17,6 +17,10 @@ class TCPnetServer: NSObject, ObservableObject {
     @Published var listenerState: String = ""
     @Published var receiveData: String = ""
     
+    ///获取车机的ip和port
+    @Published var address: String = ""
+    @Published var port: String = ""
+    
     private var listener: NWListener?
     
     let monitor = NWPathMonitor()
@@ -31,6 +35,9 @@ class TCPnetServer: NSObject, ObservableObject {
             ///PS：创建TCP的Server，可以接收很多次消息，创建UDP的Server，一次链接只能接收一次消息
             ///可查看https://www.cnblogs.com/17years/p/15251559.html
             self.listener = try NWListener(using: .tcp)
+            
+            let parameter = NWParameters.udp
+            parameter.requiredLocalEndpoint = .hostPort(host: NWEndpoint.Host("0.0.0.0"), port: NWEndpoint.Port(rawValue: 8080)!) //.service(name: called, type: serviceTCPName, domain: serviceDomain, interface: nil)
             
             let txtDict = ["test": "_localNode.peerID",
                            "userid": random.description]
@@ -119,6 +126,9 @@ class TCPnetServer: NSObject, ObservableObject {
                     switch host {
                     case let .ipv4(ip4):
                         print("___>>>_test_2_\(ip4)")
+                        DispatchQueue.main.async {
+                            self.address = ip4.debugDescription
+                        }
                     case let .ipv6(ip6):
                         print("___>>>_test_3_\(ip6)")
                     default:
