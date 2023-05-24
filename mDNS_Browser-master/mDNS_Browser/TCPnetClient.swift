@@ -46,6 +46,7 @@ class TCPnetClient: NSObject, ObservableObject {
             return
         }
         self.netConnect = NWConnection(host: NWEndpoint.Host(address), port: port, using: .tcp)
+        
         self.netConnect?.stateUpdateHandler = { (newState) in
             print("__>>>__bonjourToTCP: ConnecAQAAaAAAAaation details: \(String(describing: self.netConnect?.debugDescription))")
             switch (newState) {

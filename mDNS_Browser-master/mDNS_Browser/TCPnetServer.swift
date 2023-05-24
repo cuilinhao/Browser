@@ -35,9 +35,22 @@ class TCPnetServer: NSObject, ObservableObject {
             ///PS：创建TCP的Server，可以接收很多次消息，创建UDP的Server，一次链接只能接收一次消息
             ///可查看https://www.cnblogs.com/17years/p/15251559.html
             self.listener = try NWListener(using: .tcp)
+            let server = try NWListener(using: .tcp, on: 8081)
+            server.service = .init(name: <#T##String?#>, type: <#T##String#>, domain: <#T##String?#>, txtRecord: <#T##Data?#>)
+            
             
             let parameter = NWParameters.udp
             parameter.requiredLocalEndpoint = .hostPort(host: NWEndpoint.Host("0.0.0.0"), port: NWEndpoint.Port(rawValue: 8080)!) //.service(name: called, type: serviceTCPName, domain: serviceDomain, interface: nil)
+            
+            if #available(iOS 16.0, *) {
+                let ff =  try! NWListener(service: .init(type: serviceTCPName), using: parameter)
+                server.service = .init(name: <#T##String?#>, type: <#T##String#>, domain: <#T##String?#>, txtRecord: <#T##Data?#>)
+            } else {
+                //和if里面的一样
+                let ff = try! NWListener(using: parameter)
+                ff.service = .init(type: serviceTCPName)
+            }
+            
             
             let txtDict = ["test": "_localNode.peerID",
                            "userid": random.description]
